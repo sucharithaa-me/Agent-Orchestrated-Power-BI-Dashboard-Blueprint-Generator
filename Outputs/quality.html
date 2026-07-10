@@ -1,0 +1,207 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Quality Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            width: 300px;
+            text-align: left;
+            transition: transform 0.2s ease-in-out;
+            border-left: 5px solid;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #34495e;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+        .card p {
+            font-size: 1em;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .card .score {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        /* Card specific colors */
+        .card.health { border-color: #27ae60; } /* Green */
+        .card.missing { border-color: #e67e22; } /* Orange */
+        .card.duplicate { border-color: #2ecc71; } /* Emerald Green */
+        .card.column-quality { border-color: #3498db; } /* Peter River Blue */
+        .card.consistency { border-color: #f39c12; } /* Orange */
+        .card.recommendation { border-color: #9b59b6; } /* Amethyst Purple */
+
+        .section-content {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .attention { color: #e74c3c; font-weight: bold; }
+        .success { color: #27ae60; font-weight: bold; }
+        .info { color: #3498db; }
+    </style>
+</head>
+<body>
+
+    <h1>Data Quality Report: Football Player Statistics</h1>
+
+    <div class="card-container">
+        <div class="card health">
+            <h3>Overall Data Health Score</h3>
+            <p>An initial assessment of the dataset's quality.</p>
+            <div class="score" style="color: #27ae60;">85/100</div>
+        </div>
+
+        <div class="card duplicate">
+            <h3>Duplicate Records</h3>
+            <p>Count of identical rows in the dataset.</p>
+            <div class="score" style="color: #2ecc71;">0</div>
+        </div>
+
+        <div class="card missing">
+            <h3>Missing Values Overview</h3>
+            <p>Initial assessment based on provided summary.</p>
+            <div class="score" style="color: #e67e22;">Unknown</div>
+        </div>
+    </div>
+
+    <h2>Missing Values</h2>
+    <div class="section-content">
+        <p>The provided dataset summary does not include specific counts or percentages of missing values per column. This is a critical area for a comprehensive data quality assessment.</p>
+        <p><strong>Initial Assessment:</strong> <span class="attention">Unknown.</span> Without detailed column-level missing value statistics, it's impossible to quantify the impact. Many numeric 'Measure' columns (e.g., `market_value_eur`, `expected_goals_xg`, various performance scores) are prone to missingness if data collection is incomplete for certain matches or players.</p>
+    </div>
+
+    <h2>Duplicate Records</h2>
+    <div class="section-content">
+        <p>The dataset summary explicitly states:</p>
+        <ul>
+            <li><strong>Duplicate Rows:</strong> <span class="success">0</span></li>
+        </ul>
+        <p><strong>Assessment:</strong> This is excellent. The absence of duplicate rows indicates a robust primary key or unique identifier system, or careful data ingestion processes, ensuring each row represents a distinct observation (likely a player's performance in a specific match).</p>
+    </div>
+
+    <h2>Column Quality</h2>
+    <div class="section-content">
+        <p>A review of column classifications reveals several areas for closer inspection regarding data types, domain validity, and appropriate use of identifiers/categories.</p>
+        <ul>
+            <li><strong>Identifier Columns (`player_id`, `match_id`):</strong> Classified as 'Identifier, Text'. These are crucial for linking and uniquely identifying records. It's assumed they are unique at their respective levels (e.g., `player_id` for each player, `match_id` for each match). The combination of `player_id` and `match_id` should form a unique key for each row.</li>
+            <li><strong>Date Column (`match_date`):</strong> Classified as 'Date, Text'. Storing dates as 'Text' can lead to inconsistent formats (e.g., "YYYY-MM-DD", "DD/MM/YYYY", "MM-DD-YY").
+                <br><span class="attention"><strong>Potential Issue:</strong> Inconsistent date formats may hinder chronological analysis and require extensive parsing.</span></li>
+            <li><strong>`offsides` Column:</strong> Classified as 'Identifier, Numeric, Category'. The 'Identifier' classification for a metric like 'offsides' is unusual. Offsides is typically a count (Numeric) or a binary flag (Category if 0/1).
+                <br><span class="attention"><strong>Potential Issue:</strong> If 'offsides' is intended as a count, its 'Identifier' classification is misleading and warrants clarification. If it's a unique event ID for each offside, it means multiple rows per player per match for offsides, which contradicts typical aggregate stats per match row.</span></li>
+            <li><strong>Percentage Columns (`pass_accuracy`, `save_percentage`):</strong> Classified as 'Numeric, Measure'.
+                <br><span class="info"><strong>Recommendation:</strong> These columns require domain validation to ensure values fall within a logical range (e.g., 0-100% or 0.0-1.0).</span></li>
+            <li><strong>Categorical Consistency:</strong> Columns like `nationality`, `team`, `position`, `club_name`, `stadium`, `city`, `opponent_team`, `tournament_stage`, `match_result`, `preferred_foot` are classified as 'Text, Category'.
+                <br><span class="info"><strong>Recommendation:</strong> These fields should be checked for consistent spelling, casing, and absence of synonyms (e.g., "Man Utd" vs. "Manchester United").</span></li>
+            <li><strong>Numeric Measures:</strong> A large number of columns are 'Numeric, Measure'. These will benefit from checks for unexpected values (e.g., negative counts, excessively high values).</li>
+        </ul>
+    </div>
+
+    <h2>Consistency Issues</h2>
+    <div class="section-content">
+        <p>Data consistency checks involve validating relationships between different columns and logical constraints.</p>
+        <ul>
+            <li><strong>Cross-Column Numeric Consistency:</strong>
+                <ul>
+                    <li>`successful_passes` should be less than or equal to `total_passes`.</li>
+                    <li>`successful_dribbles` should be less than or equal to `dribbles_attempted`.</li>
+                    <li>`shots_on_target` should be less than or equal to `shots`.</li>
+                    <li>`aerial_duels_won` and `aerial_duels_lost` should represent a logical sum for `aerial_duels_attempted` (if that were present).</li>
+                    <li>`pass_accuracy` and `save_percentage` should correctly derive from their respective components (e.g., `successful_passes / total_passes`).</li>
+                </ul>
+            </li>
+            <li><strong>Match-Level Aggregation Consistency:</strong>
+                <ul>
+                    <li>The sum of `goals` for all players on a `team` in a specific `match_id` should equal `goals_team` for that match.</li>
+                    <li>`goals_opponent` for one team should ideally match `goals_team` for the `opponent_team` in the same `match_id`.</li>
+                </ul>
+            </li>
+            <li><strong>Tournament-Level Aggregation Consistency:</strong>
+                <ul>
+                    <li>`total_goals_tournament`, `total_assists_tournament`, `total_minutes_tournament` should accurately accumulate over all matches for a given player within the tournament context.</li>
+                </ul>
+            </li>
+            <li><strong>Domain Consistency:</strong>
+                <ul>
+                    <li>All count-based numeric columns (e.g., `goals`, `assists`, `shots`, `fouls_committed`, `yellow_cards`, `red_cards`) should be non-negative integers.</li>
+                    <li>`minutes_played` should be non-negative and likely within match duration limits (e.g., 0-120 minutes for a typical match).</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <h2>Recommendations</h2>
+    <div class="section-content">
+        <p>To enhance the quality and reliability of this dataset, the following recommendations are made:</p>
+        <ul>
+            <li><span class="info"><strong>Missing Value Analysis:</strong></span> Perform a detailed analysis of missing values for all columns. Quantify missingness and determine appropriate imputation strategies or handling based on context.</li>
+            <li><span class="info"><strong>Date Standardization:</strong></span> Standardize the `match_date` column to a consistent date format (e.g., YYYY-MM-DD) and convert its data type from 'Text' to a proper 'Date' type.</li>
+            <li><span class="info"><strong>Clarify `offsides`:</strong></span> Investigate the intended meaning and classification of the `offsides` column. If it's a count, remove the 'Identifier' classification.</li>
+            <li><span class="info"><strong>Domain and Range Validation:</strong></span> Implement strict validation rules for all numeric 'Measure' columns. This includes:
+                <ul>
+                    <li>Ensuring percentages are within 0-100 (or 0.0-1.0).</li>
+                    <li>Verifying counts are non-negative integers.</li>
+                    <li>Checking for realistic ranges (e.g., `age`, `height_cm`, `weight_kg`, `minutes_played`).</li>
+                </ul>
+            </li>
+            <li><span class="info"><strong>Categorical Standardization:</strong></span> Apply text cleaning and standardization to all 'Text, Category' columns (`nationality`, `team`, `club_name`, `stadium`, `city`, etc.) to resolve inconsistencies in spelling, casing, and aliases.</li>
+            <li><span class="info"><strong>Cross-Column Consistency Checks:</strong></span> Develop and apply rules to validate the logical relationships between dependent columns, such as sums, ratios, and aggregated totals (e.g., `successful_passes` vs. `total_passes`, `goals_team` vs. sum of player `goals`).</li>
+            <li><span class="info"><strong>Schema Enforcement:</strong></span> Ensure the data types conform to the classifications provided (e.g., all numeric columns are indeed numbers, dates are dates).</li>
+        </ul>
+    </div>
+
+</body>
+</html>
+```

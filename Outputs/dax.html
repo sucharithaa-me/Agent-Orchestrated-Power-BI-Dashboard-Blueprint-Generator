@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Power BI DAX Measures for Football Analytics</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa; /* Very light grey background for the page */
+        margin: 0;
+        padding: 20px;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 20px auto;
+        padding: 0;
+    }
+    .header {
+        background-color: #2196F3; /* Deep Blue */
+        color: white;
+        padding: 25px;
+        text-align: center;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        box-shadow: 0 6px 12px 0 rgba(0,0,0,0.25);
+        margin-bottom: 25px;
+    }
+    .header h1 {
+        margin: 0;
+        font-size: 2.2em;
+        letter-spacing: 0.5px;
+    }
+    .card {
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px 0 rgba(0,0,0,0.15);
+        margin-bottom: 25px;
+        overflow: hidden; /* Ensures rounded corners apply to content */
+        transition: transform 0.2s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    .card-content {
+        padding: 25px;
+    }
+    h2 {
+        color: #333;
+        margin-top: 0;
+        font-size: 1.6em;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+    th, td {
+        padding: 12px 18px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        line-height: 1.5;
+    }
+    th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+        color: #555;
+        font-size: 1.05em;
+    }
+    td:first-child {
+        font-weight: bold;
+        color: #1976D2; /* Slightly darker blue for measure name */
+        width: 25%;
+    }
+    .formula pre {
+        background-color: #e3f2fd; /* Light blue for code block */
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-family: 'Consolas', 'Monaco', 'Lucida Console', monospace;
+        color: #0d47a1; /* Darker blue for code text */
+        font-size: 0.9em;
+        line-height: 1.4;
+    }
+    .explanation {
+        color: #4a4a4a;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Power BI DAX Measures for Football Analytics</h1>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>Total Goals Scored</h2>
+                <table>
+                    <tr>
+                        <th>Measure Name</th>
+                        <td>Total Goals Scored</td>
+                    </tr>
+                    <tr>
+                        <th>DAX Formula</th>
+                        <td class="formula"><pre>SUM('YourTableName'[goals])</pre></td>
+                    </tr>
+                    <tr>
+                        <th>Business Purpose</th>
+                        <td>To calculate the sum of all goals scored across all matches and players.</td>
+                    </tr>
+                    <tr>
+                        <th>Explanation</th>
+                        <td class="explanation">This measure directly sums the 'goals' column, providing a fundamental metric for offensive output. It can be used to analyze overall goal production for teams, players, or tournaments, helping to identify top scorers or high-scoring matches.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>Average Player Rating</h2>
+                <table>
+                    <tr>
+                        <th>Measure Name</th>
+                        <td>Average Player Rating</td>
+                    </tr>
+                    <tr>
+                        <th>DAX Formula</th>
+                        <td class="formula"><pre>AVERAGE('YourTableName'[player_rating])</pre></td>
+                    </tr>
+                    <tr>
+                        <th>Business Purpose</th>
+                        <td>To determine the average performance rating of players across all appearances.</td>
+                    </tr>
+                    <tr>
+                        <th>Explanation</th>
+                        <td class="explanation">This measure calculates the mean value of the 'player_rating' column. It's useful for assessing a player's typical performance level, comparing the average ratings of different teams or positions, or tracking a player's consistency over time.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>Goal Conversion Rate</h2>
+                <table>
+                    <tr>
+                        <th>Measure Name</th>
+                        <td>Goal Conversion Rate</td>
+                    </tr>
+                    <tr>
+                        <th>DAX Formula</th>
+                        <td class="formula"><pre>DIVIDE(SUM('YourTableName'[goals]), SUM('YourTableName'[shots]), 0)</pre></td>
+                    </tr>
+                    <tr>
+                        <th>Business Purpose</th>
+                        <td>To measure the efficiency of players/teams in converting shots into goals.</td>
+                    </tr>
+                    <tr>
+                        <th>Explanation</th>
+                        <td class="explanation">This measure divides the total 'goals' by the total 'shots' taken. It indicates how many goals are scored per shot, providing insight into offensive efficiency. A higher percentage signifies more clinical finishing. The <code>DIVIDE</code> function handles division by zero errors gracefully by returning 0 if there are no shots.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>Pass Success Rate</h2>
+                <table>
+                    <tr>
+                        <th>Measure Name</th>
+                        <td>Pass Success Rate</td>
+                    </tr>
+                    <tr>
+                        <th>DAX Formula</th>
+                        <td class="formula"><pre>DIVIDE(SUM('YourTableName'[successful_passes]), SUM('YourTableName'[total_passes]), 0)</pre></td>
+                    </tr>
+                    <tr>
+                        <th>Business Purpose</th>
+                        <td>To calculate the percentage of successful passes out of all attempted passes.</td>
+                    </tr>
+                    <tr>
+                        <th>Explanation</th>
+                        <td class="explanation">This measure divides the sum of 'successful_passes' by the sum of 'total_passes'. It's a key metric for assessing a player's or team's ball retention and passing accuracy, crucial for controlling possession and build-up play.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>Total Defensive Actions</h2>
+                <table>
+                    <tr>
+                        <th>Measure Name</th>
+                        <td>Total Defensive Actions</td>
+                    </tr>
+                    <tr>
+                        <th>DAX Formula</th>
+                        <td class="formula"><pre>SUM('YourTableName'[tackles]) + SUM('YourTableName'[interceptions]) + SUM('YourTableName'[clearances]) + SUM('YourTableName'[blocks])</pre></td>
+                    </tr>
+                    <tr>
+                        <th>Business Purpose</th>
+                        <td>To aggregate the total number of key defensive contributions made by players.</td>
+                    </tr>
+                    <tr>
+                        <th>Explanation</th>
+                        <td class="explanation">This measure sums up several individual defensive statistics: 'tackles', 'interceptions', 'clearances', and 'blocks'. It provides a comprehensive view of a player's or team's overall defensive workload and effectiveness in disrupting opponent attacks.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>Goalkeeper Save Ratio</h2>
+                <table>
+                    <tr>
+                        <th>Measure Name</th>
+                        <td>Goalkeeper Save Ratio</td>
+                    </tr>
+                    <tr>
+                        <th>DAX Formula</th>
+                        <td class="formula"><pre>VAR TotalSaves = SUM('YourTableName'[saves])
+RETURN DIVIDE(TotalSaves, TotalSaves + SUM('YourTableName'[goals_conceded]), 0)</pre></td>
+                    </tr>
+                    <tr>
+                        <th>Business Purpose</th>
+                        <td>To determine the proportion of shots on target saved by goalkeepers relative to shots faced.</td>
+                    </tr>
+                    <tr>
+                        <th>Explanation</th>
+                        <td class="explanation">This measure calculates the save ratio by dividing the total 'saves' by the sum of 'saves' and 'goals_conceded'. This approach assumes that 'saves' and 'goals_conceded' together represent the total shots on target faced by the goalkeeper, offering a calculated perspective on their performance.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>Average Player Market Value</h2>
+                <table>
+                    <tr>
+                        <th>Measure Name</th>
+                        <td>Average Player Market Value</td>
+                    </tr>
+                    <tr>
+                        <th>DAX Formula</th>
+                        <td class="formula"><pre>AVERAGEX(
+    DISTINCT('YourTableName'[player_id]),
+    CALCULATE(MAX('YourTableName'[market_value_eur]))
+)</pre></td>
+                    </tr>
+                    <tr>
+                        <th>Business Purpose</th>
+                        <td>To calculate the average market value per unique player, robustly handling multiple entries per player.</td>
+                    </tr>
+                    <tr>
+                        <th>Explanation</th>
+                        <td class="explanation">This measure first identifies each unique 'player_id'. For each distinct player, it takes the maximum 'market_value_eur' (assuming market value doesn't fluctuate per match for the same player, or we want the most recent/highest if it does). Then, it averages these individual player market values, avoiding overcounting if a player appears in multiple rows with the same or slightly different market value.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>Total Player of the Match Awards</h2>
+                <table>
+                    <tr>
+                        <th>Measure Name</th>
+                        <td>Total Player of the Match Awards</td>
+                    </tr>
+                    <tr>
+                        <th>DAX Formula</th>
+                        <td class="formula"><pre>SUM('YourTableName'[player_of_match_awards])</pre></td>
+                    </tr>
+                    <tr>
+                        <th>Business Purpose</th>
+                        <td>To count the total number of 'Player of the Match' awards given out.</td>
+                    </tr>
+                    <tr>
+                        <th>Explanation</th>
+                        <td class="explanation">This simple sum directly aggregates the 'player_of_match_awards' column. It can be used to identify players who consistently deliver standout performances, compare award counts across different teams or tournaments, or highlight players who frequently impact game outcomes.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>Match Goal Difference</h2>
+                <table>
+                    <tr>
+                        <th>Measure Name</th>
+                        <td>Match Goal Difference</td>
+                    </tr>
+                    <tr>
+                        <th>DAX Formula</th>
+                        <td class="formula"><pre>SUM('YourTableName'[goals_team]) - SUM('YourTableName'[goals_opponent])</pre></td>
+                    </tr>
+                    <tr>
+                        <th>Business Purpose</th>
+                        <td>To calculate the goal difference for matches, useful for understanding match outcomes from a team's perspective.</td>
+                    </tr>
+                    <tr>
+                        <th>Explanation</th>
+                        <td class="explanation">This measure subtracts the sum of 'goals_opponent' from the sum of 'goals_team'. When filtered by a specific team or match, it shows the goal difference. A positive value indicates more goals scored than conceded, a negative value the opposite, directly reflecting performance relative to opponents.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>Unique Matches Played by Player</h2>
+                <table>
+                    <tr>
+                        <th>Measure Name</th>
+                        <td>Unique Matches Played by Player</td>
+                    </tr>
+                    <tr>
+                        <th>DAX Formula</th>
+                        <td class="formula"><pre>COUNTROWS(DISTINCT('YourTableName'[match_id]))</pre></td>
+                    </tr>
+                    <tr>
+                        <th>Business Purpose</th>
+                        <td>To count the number of unique matches a player has participated in, indicating their availability and game time.</td>
+                    </tr>
+                    <tr>
+                        <th>Explanation</th>
+                        <td class="explanation">When filtered by a specific player, this measure counts the distinct 'match_id' values, indicating how many different games that player has played. Without a player filter, it would count all unique matches in the current filter context. This is useful for analyzing player availability, consistency, and overall participation.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
