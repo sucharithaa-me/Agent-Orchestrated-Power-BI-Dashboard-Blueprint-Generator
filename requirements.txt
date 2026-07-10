@@ -1,0 +1,6 @@
+google-genai
+langgraph
+langchain
+langchain-core
+pandas
+ipython
