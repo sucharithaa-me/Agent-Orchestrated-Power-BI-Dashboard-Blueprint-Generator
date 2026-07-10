@@ -8,6 +8,3 @@
 
 ![Dashboard](images/dashboard_output.png)
 
-### Business Insights
-
-![Insights](images/insight_output.png)
